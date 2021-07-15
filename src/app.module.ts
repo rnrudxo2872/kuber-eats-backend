@@ -34,7 +34,7 @@ import { Restaurant } from './restaurant/entities/restaurant.entity';
       database: process.env.DB_NAME,
       entities: [Restaurant],
       synchronize: process.env.NODE_ENV === 'prod',
-      logging: true,
+      logging: process.env.NODE_ENV === 'prod',
     }),
     RestaurantModule,
   ],

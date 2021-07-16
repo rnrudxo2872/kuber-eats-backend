@@ -12,7 +12,7 @@ export class CreateRestaurantDTO {
   @IsBoolean()
   isVegan: boolean;
 
-  @Field((_) => String) waaws;
+  @Field((_) => String)
   @IsString()
   address: string;
 

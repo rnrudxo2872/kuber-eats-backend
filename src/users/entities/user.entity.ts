@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { IsString } from 'class-validator';
 import { CoreEntity } from 'src/common/entities/core.entity';
 import { Column, Entity } from 'typeorm';
@@ -8,6 +8,11 @@ enum UserRole {
   Owner,
   Delivery,
 }
+
+registerEnumType(UserRole, {
+  name: 'UserRole',
+  description: 'User Info Object',
+});
 
 @ObjectType()
 @Entity()

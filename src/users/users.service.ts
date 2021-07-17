@@ -13,19 +13,22 @@ export class UsersService {
     return true;
   }
 
-  async createAccount({ email, password, role }: createAccountInput) {
+  async createAccount({
+    email,
+    password,
+    role,
+  }: createAccountInput): Promise<string | undefined> {
     try {
-      const exists = this.Users.findOne({ email });
+      const exists = await this.Users.findOne({ email });
 
       if (exists) {
-        //exists Email => make error
-        return;
+        return 'The current email exists.';
       }
-      this.Users.save(this.Users.create({ email, password, role }));
-      return true;
+      await this.Users.save(this.Users.create({ email, password, role }));
+      return;
     } catch (e) {
       console.log(e);
-      return;
+      return "Couldn't create account.";
     }
   }
 }

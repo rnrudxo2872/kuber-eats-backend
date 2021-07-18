@@ -16,7 +16,7 @@ export class createAccountOutput {
   @IsOptional()
   error?: string;
 
-  @Field((_) => Boolean, { nullable: true })
+  @Field((_) => Boolean)
   @IsBoolean()
   ok: boolean;
 }

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { TryCatch } from 'src/common/decorators/tryCatch.decorator';
 import { Repository } from 'typeorm';
 import { createAccountInput } from './dtos/create-account.dto';
 import { User } from './entities/user.entity';
@@ -14,22 +15,18 @@ export class UsersService {
     return this.Users.find({});
   }
 
+  @TryCatch("Couldn't create account.")
   async createAccount({
     email,
     password,
     role,
-  }: createAccountInput): Promise<string | undefined> {
-    try {
-      const exists = await this.Users.findOne({ email });
+  }: createAccountInput): Promise<{ ok: boolean; error?: string }> {
+    const exists = await this.Users.findOne({ email });
 
-      if (exists) {
-        return 'The current email exists.';
-      }
-      await this.Users.save(this.Users.create({ email, password, role }));
-      return;
-    } catch (e) {
-      console.log(e);
-      return "Couldn't create account.";
+    if (exists) {
+      return { ok: false, error: 'The current email exists.' };
     }
+    await this.Users.save(this.Users.create({ email, password, role }));
+    return { ok: true };
   }
 }

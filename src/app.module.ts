@@ -3,8 +3,6 @@ import * as Joi from 'joi';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RestaurantModule } from './restaurant/restaurant.module';
-import { Restaurant } from './restaurant/entities/restaurant.entity';
 import { UsersModule } from './users/users.module';
 import { CommonsModule } from './common/common.module';
 import { User } from './users/entities/user.entity';
@@ -23,6 +21,7 @@ import { User } from './users/entities/user.entity';
         DB_USERNAME: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_NAME: Joi.string().required(),
+        SECRET_KEY: Joi.string().required(),
       }),
     }),
     GraphQLModule.forRoot({

@@ -2,14 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TryCatch } from 'src/common/decorators/tryCatch.decorator';
 import { Repository } from 'typeorm';
+import * as jwt from 'jsonwebtoken';
 import { createAccountInput } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly Users: Repository<User>,
+    private readonly Config: ConfigService,
   ) {}
 
   async getAll(): Promise<User[]> {
@@ -46,6 +49,10 @@ export class UsersService {
       return { ok: false, error: 'Passwords do not match.' };
     }
 
-    return { ok: true, token: 'your access token' };
+    const token = jwt.sign({ id: user.id }, this.Config.get('SECRET_KEY'), {
+      algorithm: 'HS256',
+    });
+
+    return { ok: true, token };
   }
 }

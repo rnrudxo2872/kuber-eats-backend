@@ -1,4 +1,5 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { TryCatch } from 'src/common/decorators/tryCatch.decorator';
 import {
   createAccountInput,
   createAccountOutput,
@@ -15,27 +16,21 @@ export class UsersResolver {
   }
 
   @Mutation((_) => createAccountOutput)
+  @TryCatch('There is a problem with the server.')
   async createAccount(
     @Args('input') createAccountInput: createAccountInput,
   ): Promise<createAccountOutput> {
-    try {
-      const error = await this.usersService.createAccount(createAccountInput);
-      console.log(error);
+    const error = await this.usersService.createAccount(createAccountInput);
+    console.log(error);
 
-      if (error) {
-        return {
-          ok: false,
-          error,
-        };
-      }
-      return {
-        ok: true,
-      };
-    } catch (error) {
+    if (error) {
       return {
         ok: false,
         error,
       };
     }
+    return {
+      ok: true,
+    };
   }
 }

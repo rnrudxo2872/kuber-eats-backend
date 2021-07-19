@@ -55,4 +55,10 @@ export class UsersService {
 
     return { ok: true, token };
   }
+
+  @TryCatch('해당하는 유저가 없습니다.')
+  async getById(id) {
+    console.log('userID type ====> ' + typeof id);
+    return this.Users.findOne({ id });
+  }
 }

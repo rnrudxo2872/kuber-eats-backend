@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TryCatch } from 'src/common/decorators/tryCatch.decorator';
 import { Repository } from 'typeorm';
@@ -15,9 +15,7 @@ export class UsersService {
     @InjectRepository(User) private readonly Users: Repository<User>,
     private readonly Config: ConfigService,
     private readonly jwtService: JwtService,
-  ) {
-    console.log(jwtService);
-  }
+  ) {}
 
   async getAll(): Promise<User[]> {
     return this.Users.find({});

@@ -7,13 +7,17 @@ import { createAccountInput } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from 'src/jwt/jwt.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly Users: Repository<User>,
     private readonly Config: ConfigService,
-  ) {}
+    private readonly jwtService: JwtService,
+  ) {
+    console.log(jwtService);
+  }
 
   async getAll(): Promise<User[]> {
     return this.Users.find({});

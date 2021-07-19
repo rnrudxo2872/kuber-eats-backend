@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { CommonsModule } from './common/common.module';
 import { User } from './users/entities/user.entity';
+import { JwtModule } from './jwt/jwt.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { User } from './users/entities/user.entity';
     }),
     UsersModule,
     CommonsModule,
+    JwtModule.forRoot({ isGlobal: true, secretKey: process.env.SECRET_KEY }),
   ],
   controllers: [],
   providers: [],

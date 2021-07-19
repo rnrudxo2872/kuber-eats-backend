@@ -51,9 +51,7 @@ export class UsersService {
       return { ok: false, error: 'Passwords do not match.' };
     }
 
-    const token = jwt.sign({ id: user.id }, this.Config.get('SECRET_KEY'), {
-      algorithm: 'HS256',
-    });
+    const token = this.jwtService.sign(user.id);
 
     return { ok: true, token };
   }

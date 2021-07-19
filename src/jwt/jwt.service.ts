@@ -1,3 +1,4 @@
+import * as jwt from 'jsonwebtoken';
 import { Inject, Injectable } from '@nestjs/common';
 import { JWT_CONFIG_OPTIONS } from './jwt.constant';
 import { JwtModuleOptions } from './jwt.interface';
@@ -7,7 +8,9 @@ export class JwtService {
   constructor(
     @Inject(JWT_CONFIG_OPTIONS) private readonly options: JwtModuleOptions,
   ) {}
-  hello() {
-    console.log('hello');
+  sign(userId: number): string {
+    return jwt.sign({ id: userId }, this.options.secretKey, {
+      algorithm: 'HS256',
+    });
   }
 }

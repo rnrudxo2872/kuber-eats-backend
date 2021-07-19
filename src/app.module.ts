@@ -13,6 +13,7 @@ import { CommonsModule } from './common/common.module';
 import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
+import { async } from 'rxjs';
 
 @Module({
   imports: [
@@ -33,6 +34,11 @@ import { JwtMiddleware } from './jwt/jwt.middleware';
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: true,
+      context: async ({ req }) => {
+        return {
+          users: req['users'],
+        };
+      },
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',

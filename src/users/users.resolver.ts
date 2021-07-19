@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { TryCatch } from 'src/common/decorators/tryCatch.decorator';
 import {
   createAccountInput,
@@ -30,7 +30,12 @@ export class UsersResolver {
   }
 
   @Mutation((_) => LoginOutput)
-  async login(@Args('input') inputLoginDTO: LoginInput): Promise<LoginOutput> {
+  async login(
+    @Args('input') inputLoginDTO: LoginInput,
+    @Context() context,
+  ): Promise<LoginOutput> {
+    console.log('여기===>', context);
+
     return this.usersService.login(inputLoginDTO);
   }
 }

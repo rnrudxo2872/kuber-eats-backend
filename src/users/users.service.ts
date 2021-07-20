@@ -1,19 +1,16 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TryCatch } from 'src/common/decorators/tryCatch.decorator';
 import { Repository } from 'typeorm';
-import * as jwt from 'jsonwebtoken';
 import { createAccountInput } from './dtos/create-account.dto';
-import { LoginInput, LoginOutput } from './dtos/login.dto';
+import { LoginInput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
-import { ConfigService } from '@nestjs/config';
 import { JwtService } from 'src/jwt/jwt.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly Users: Repository<User>,
-    private readonly Config: ConfigService,
     private readonly jwtService: JwtService,
   ) {}
 

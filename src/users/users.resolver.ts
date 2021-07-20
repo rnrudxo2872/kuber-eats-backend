@@ -1,4 +1,6 @@
+import { UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
+import { AuthContextUser } from 'src/auth/auth-user.guard';
 import { TryCatch } from 'src/common/decorators/tryCatch.decorator';
 import {
   createAccountInput,
@@ -30,12 +32,13 @@ export class UsersResolver {
   }
 
   @Mutation((_) => LoginOutput)
-  async login(
-    @Args('input') inputLoginDTO: LoginInput,
-    @Context() context,
-  ): Promise<LoginOutput> {
-    console.log('여기===>', context);
-
+  async login(@Args('input') inputLoginDTO: LoginInput): Promise<LoginOutput> {
     return this.usersService.login(inputLoginDTO);
+  }
+
+  @Query((_) => User)
+  @UseGuards(AuthContextUser)
+  async me(@Context() context) {
+    return context.users;
   }
 }

@@ -14,6 +14,7 @@ import { User } from './users/entities/user.entity';
 import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { async } from 'rxjs';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -52,7 +53,6 @@ import { async } from 'rxjs';
       logging: process.env.NODE_ENV !== 'prod',
     }),
     UsersModule,
-    CommonsModule,
     JwtModule.forRoot({ isGlobal: true, secretKey: process.env.SECRET_KEY }),
   ],
   controllers: [],

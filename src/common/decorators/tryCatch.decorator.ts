@@ -2,11 +2,11 @@ export function TryCatch(errorMsg?: string) {
   return function (target: any, key: string, desc: PropertyDescriptor) {
     const targetMethod = desc.value;
 
-    desc.value = function (...args: any[]) {
+    desc.value = async function (...args: any[]) {
       try {
-        return targetMethod.apply(this, args);
+        return await targetMethod.apply(this, args);
       } catch (e) {
-        console.log(e);
+        errorMsg = typeof e === 'string' ? e : errorMsg;
         return { ok: false, error: errorMsg };
       }
     };

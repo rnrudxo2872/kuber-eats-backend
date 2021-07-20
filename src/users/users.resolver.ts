@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { InternalServerErrorException, UseGuards } from '@nestjs/common';
 import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { AuthContextUser } from 'src/auth/auth-user.guard';
@@ -8,6 +8,7 @@ import {
   createAccountOutput,
 } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
+import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 
@@ -41,5 +42,24 @@ export class UsersResolver {
   @UseGuards(AuthContextUser)
   async me(@AuthUser() user: User) {
     return user;
+  }
+
+  @Query((_) => UserProfileOutput)
+  @UseGuards(AuthContextUser)
+  @TryCatch('오류입니다.')
+  async userProfile(
+    @Args() userProfileInput: UserProfileInput,
+  ): Promise<UserProfileOutput> {
+    const user = await this.usersService.getById(userProfileInput.Id);
+    if (!user) {
+      console.log('--------------------------------------------------');
+
+      throw 'User Not Found.';
+    }
+
+    return {
+      ok: true,
+      user,
+    };
   }
 }

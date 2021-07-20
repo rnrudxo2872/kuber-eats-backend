@@ -27,7 +27,7 @@ export class UsersService {
     const exists = await this.Users.findOne({ email });
 
     if (exists) {
-      return { ok: false, error: 'The current email exists.' };
+      throw 'The current email exists.';
     }
     await this.Users.save(this.Users.create({ email, password, role }));
     return { ok: true };
@@ -40,12 +40,12 @@ export class UsersService {
   }: LoginInput): Promise<{ ok: boolean; error?: any; token?: string }> {
     const user = await this.Users.findOne({ email });
     if (!user) {
-      return { ok: false, error: 'ID does not exist.' };
+      throw 'ID does not exist.';
     }
 
     const passwordCheck = await user.checkPassword(password);
     if (!passwordCheck) {
-      return { ok: false, error: 'Passwords do not match.' };
+      throw 'Passwords do not match.';
     }
 
     const token = this.jwtService.sign(user.id);

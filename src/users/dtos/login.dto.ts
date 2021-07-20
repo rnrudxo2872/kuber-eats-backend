@@ -1,6 +1,6 @@
 import { Field, InputType, ObjectType, PickType } from '@nestjs/graphql';
 import { IsOptional, IsString } from 'class-validator';
-import { Output } from 'src/common/dtos/output.dto';
+import { CommonOutput } from 'src/common/dtos/output.dto';
 import { User } from '../entities/user.entity';
 
 @InputType()
@@ -11,7 +11,7 @@ export class LoginInput extends PickType(
 ) {}
 
 @ObjectType()
-export class LoginOutput extends Output {
+export class LoginOutput extends CommonOutput {
   @Field((_) => String, { nullable: true })
   @IsString()
   @IsOptional()

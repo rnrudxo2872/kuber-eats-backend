@@ -39,7 +39,8 @@ export class UsersService {
     email,
     password,
   }: LoginInput): Promise<{ ok: boolean; error?: any; token?: string }> {
-    const user = await this.Users.findOne({ email });
+    const user = await this.Users.findOne({ email }, { select: ['password'] });
+
     if (!user) {
       throw 'ID does not exist.';
     }
@@ -70,8 +71,15 @@ export class UsersService {
 
     const user = await this.Users.findOne({ id });
 
-    user.email = EditUserInput?.email;
-    user.password = EditUserInput?.password;
+    if (EditUserInput.email) {
+      user.email = EditUserInput.email;
+    }
+
+    if (EditUserInput.password) {
+      user.password = EditUserInput.password;
+    }
+
+    console.log(user);
 
     this.Users.save(user);
     return {

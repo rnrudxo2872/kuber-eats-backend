@@ -24,7 +24,7 @@ export class User extends CoreEntity {
   @Field((_) => String)
   email: string;
 
-  @Column()
+  @Column({ select: false })
   @IsString()
   @Field((_) => String)
   password: string;
@@ -37,6 +37,9 @@ export class User extends CoreEntity {
   @BeforeInsert()
   @BeforeUpdate()
   async beforInsertDB() {
+    if (!this.password) {
+      return;
+    }
     try {
       this.password = await bcrypt.hash(this.password, 5);
     } catch (e) {
@@ -47,6 +50,8 @@ export class User extends CoreEntity {
 
   async checkPassword(passowrdA: string): Promise<boolean> {
     try {
+      console.log(this.password);
+
       return bcrypt.compare(passowrdA, this.password);
     } catch (e) {
       console.log(e);

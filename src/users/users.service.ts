@@ -6,6 +6,7 @@ import { createAccountInput } from './dtos/create-account.dto';
 import { LoginInput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
 import { JwtService } from 'src/jwt/jwt.service';
+import { EditUserInput, EditUserOutput } from './dtos/user-edit.dto';
 
 @Injectable()
 export class UsersService {
@@ -56,5 +57,25 @@ export class UsersService {
   @TryCatch('해당하는 유저가 없습니다.')
   async getById(id) {
     return this.Users.findOne({ id });
+  }
+
+  @TryCatch('잘못된 요청입니다.')
+  async editUser(
+    id: number,
+    EditUserInput: EditUserInput,
+  ): Promise<EditUserOutput> {
+    if (!EditUserInput || Object.keys(EditUserInput).length === 0) {
+      throw Error();
+    }
+
+    const user = await this.Users.findOne({ id });
+
+    user.email = EditUserInput?.email;
+    user.password = EditUserInput?.password;
+
+    this.Users.save(user);
+    return {
+      ok: true,
+    };
   }
 }

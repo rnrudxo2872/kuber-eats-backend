@@ -8,6 +8,7 @@ import {
   createAccountOutput,
 } from './dtos/create-account.dto';
 import { LoginInput, LoginOutput } from './dtos/login.dto';
+import { EditUserInput, EditUserOutput } from './dtos/user-edit.dto';
 import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
@@ -52,8 +53,6 @@ export class UsersResolver {
   ): Promise<UserProfileOutput> {
     const user = await this.usersService.getById(userProfileInput.Id);
     if (!user) {
-      console.log('--------------------------------------------------');
-
       throw 'User Not Found.';
     }
 
@@ -61,5 +60,14 @@ export class UsersResolver {
       ok: true,
       user,
     };
+  }
+
+  @Mutation((_) => EditUserOutput)
+  @UseGuards(AuthContextUser)
+  async editUser(
+    @Args() EditUserInput: EditUserInput,
+    @AuthUser() user,
+  ): Promise<EditUserOutput> {
+    return this.usersService.editUser(user.id, EditUserInput);
   }
 }

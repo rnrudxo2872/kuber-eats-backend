@@ -1,5 +1,5 @@
 import { ArgsType, Field, ObjectType, PartialType } from '@nestjs/graphql';
-import { IsNumber } from 'class-validator';
+import { IsNumber, IsOptional } from 'class-validator';
 import { CommonOutput } from 'src/common/dtos/output.dto';
 import { User } from '../entities/user.entity';
 
@@ -13,5 +13,6 @@ export class UserProfileInput {
 @ObjectType()
 export class UserProfileOutput extends CommonOutput {
   @Field((_) => User, { nullable: true })
+  @IsOptional()
   user?: User;
 }

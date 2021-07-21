@@ -12,7 +12,7 @@ import { VerificationService } from './verification.service';
 export class VerificationModule {
   static forRoot(Options: VerificationOption): DynamicModule {
     return {
-      global: Options.isGlobal,
+      global: Options?.isGlobal,
       module: VerificationModule,
       providers: [VerificationService, VerificationResolver],
       exports: [VerificationService],

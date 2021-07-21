@@ -17,6 +17,7 @@ import { async } from 'rxjs';
 import { AuthModule } from './auth/auth.module';
 import { VerificationModule } from './verification/verification.module';
 import { Verification } from './verification/entities/verification.entity';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { Verification } from './verification/entities/verification.entity';
     UsersModule,
     JwtModule.forRoot({ isGlobal: true, secretKey: process.env.SECRET_KEY }),
     VerificationModule.forRoot({ isGlobal: true }),
+    MailModule,
   ],
   controllers: [],
   providers: [],

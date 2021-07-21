@@ -37,6 +37,7 @@ import { MailModule } from './mail/mail.module';
         MAIL_API_KEY: Joi.string().required(),
         MAIL_DOMAIN: Joi.string().required(),
         MAIL_FROM_EMAIL: Joi.string().required(),
+        MAIL_FROM_PASS: Joi.string().required(),
       }),
     }),
     GraphQLModule.forRoot({

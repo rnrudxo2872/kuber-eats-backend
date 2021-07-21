@@ -13,3 +13,14 @@ export class MailOptions {
   @IsString()
   fromEmail: string;
 }
+
+export class MailContext {
+  @IsString()
+  to: string;
+
+  @IsString()
+  subject: string;
+
+  @IsString()
+  html: string;
+}

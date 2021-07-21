@@ -82,6 +82,8 @@ export class UsersService {
 
     if (EditUserInput.email) {
       user.email = EditUserInput.email;
+      user.verify = false;
+
       await this.verificationService.create(user);
     }
 

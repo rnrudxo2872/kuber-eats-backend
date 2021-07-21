@@ -1,5 +1,5 @@
-import { InternalServerErrorException, UseGuards } from '@nestjs/common';
-import { Resolver, Query, Mutation, Args, Context } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
+import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { AuthUser } from 'src/auth/auth-user.decorator';
 import { AuthContextUser } from 'src/auth/auth-user.guard';
 import { TryCatch } from 'src/common/decorators/tryCatch.decorator';

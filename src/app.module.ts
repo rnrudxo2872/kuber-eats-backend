@@ -15,6 +15,8 @@ import { JwtModule } from './jwt/jwt.module';
 import { JwtMiddleware } from './jwt/jwt.middleware';
 import { async } from 'rxjs';
 import { AuthModule } from './auth/auth.module';
+import { VerificationModule } from './verification/verification.module';
+import { Verification } from './verification/entities/verification.entity';
 
 @Module({
   imports: [
@@ -48,12 +50,13 @@ import { AuthModule } from './auth/auth.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [User],
+      entities: [User, Verification],
       synchronize: process.env.NODE_ENV !== 'prod',
       logging: process.env.NODE_ENV !== 'prod',
     }),
     UsersModule,
     JwtModule.forRoot({ isGlobal: true, secretKey: process.env.SECRET_KEY }),
+    VerificationModule.forRoot({ isGlobal: true }),
   ],
   controllers: [],
   providers: [],

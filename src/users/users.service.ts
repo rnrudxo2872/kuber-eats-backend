@@ -7,11 +7,13 @@ import { LoginInput } from './dtos/login.dto';
 import { User } from './entities/user.entity';
 import { JwtService } from 'src/jwt/jwt.service';
 import { EditUserInput, EditUserOutput } from './dtos/user-edit.dto';
+import { VerificationService } from 'src/verification/verification.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly Users: Repository<User>,
+    private readonly verificationService: VerificationService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -30,7 +32,10 @@ export class UsersService {
     if (exists) {
       throw 'The current email exists.';
     }
-    await this.Users.save(this.Users.create({ email, password, role }));
+    const user = await this.Users.save(
+      this.Users.create({ email, password, role }),
+    );
+    await this.verificationService.create(user);
     return { ok: true };
   }
 
@@ -39,7 +44,11 @@ export class UsersService {
     email,
     password,
   }: LoginInput): Promise<{ ok: boolean; error?: any; token?: string }> {
-    const user = await this.Users.findOne({ email }, { select: ['password'] });
+    const user = await this.Users.findOne(
+      { email },
+      { select: ['id', 'password'] },
+    );
+    console.log(user);
 
     if (!user) {
       throw 'ID does not exist.';
@@ -73,15 +82,14 @@ export class UsersService {
 
     if (EditUserInput.email) {
       user.email = EditUserInput.email;
+      await this.verificationService.create(user);
     }
 
     if (EditUserInput.password) {
       user.password = EditUserInput.password;
     }
 
-    console.log(user);
-
-    this.Users.save(user);
+    await this.Users.save(user);
     return {
       ok: true,
     };

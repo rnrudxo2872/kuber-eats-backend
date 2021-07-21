@@ -8,6 +8,7 @@ import { User } from './entities/user.entity';
 import { JwtService } from 'src/jwt/jwt.service';
 import { EditUserInput, EditUserOutput } from './dtos/user-edit.dto';
 import { VerificationService } from 'src/verification/verification.service';
+import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
 
 @Injectable()
 export class UsersService {
@@ -17,7 +18,7 @@ export class UsersService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async getAll(): Promise<User[]> {
+  getAll(): Promise<User[]> {
     return this.Users.find({});
   }
 
@@ -65,8 +66,12 @@ export class UsersService {
   }
 
   @TryCatch('해당하는 유저가 없습니다.')
-  async getById(id) {
-    return this.Users.findOne({ id });
+  async getById({ id }: UserProfileInput): Promise<UserProfileOutput> {
+    const user = await this.Users.findOne({ id });
+    if (!user) {
+      throw Error();
+    }
+    return { ok: true, user };
   }
 
   @TryCatch('잘못된 요청입니다.')

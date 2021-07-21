@@ -23,25 +23,20 @@ export class UsersResolver {
 
   @Mutation((_) => createAccountOutput)
   @TryCatch('There is a problem with the server.')
-  async createAccount(
+  createAccount(
     @Args('input') createAccountInput: createAccountInput,
   ): Promise<createAccountOutput> {
-    const { ok, error } = await this.usersService.createAccount(
-      createAccountInput,
-    );
-    console.log(error);
-
-    return { ok, error };
+    return this.usersService.createAccount(createAccountInput);
   }
 
   @Mutation((_) => LoginOutput)
-  async login(@Args('input') inputLoginDTO: LoginInput): Promise<LoginOutput> {
+  login(@Args('input') inputLoginDTO: LoginInput): Promise<LoginOutput> {
     return this.usersService.login(inputLoginDTO);
   }
 
   @Query((_) => User)
   @UseGuards(AuthContextUser)
-  async me(@AuthUser() user: User) {
+  me(@AuthUser() user: User) {
     return user;
   }
 
@@ -51,15 +46,7 @@ export class UsersResolver {
   async userProfile(
     @Args() userProfileInput: UserProfileInput,
   ): Promise<UserProfileOutput> {
-    const user = await this.usersService.getById(userProfileInput.Id);
-    if (!user) {
-      throw 'User Not Found.';
-    }
-
-    return {
-      ok: true,
-      user,
-    };
+    return this.usersService.getById(userProfileInput);
   }
 
   @Mutation((_) => EditUserOutput)

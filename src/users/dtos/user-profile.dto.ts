@@ -7,7 +7,7 @@ import { User } from '../entities/user.entity';
 export class UserProfileInput {
   @Field((_) => Number)
   @IsNumber()
-  Id: number;
+  id: number;
 }
 
 @ObjectType()

@@ -9,6 +9,7 @@ import { JwtService } from 'src/jwt/jwt.service';
 import { EditUserInput, EditUserOutput } from './dtos/user-edit.dto';
 import { VerificationService } from 'src/verification/verification.service';
 import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class UsersService {
@@ -16,6 +17,7 @@ export class UsersService {
     @InjectRepository(User) private readonly Users: Repository<User>,
     private readonly verificationService: VerificationService,
     private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
 
   getAll(): Promise<User[]> {
@@ -36,7 +38,8 @@ export class UsersService {
     const user = await this.Users.save(
       this.Users.create({ email, password, role }),
     );
-    await this.verificationService.create(user);
+    const verification = await this.verificationService.create(user);
+    await this.mailService.sendVerifyEmail(user.email, verification.code);
     return { ok: true };
   }
 
@@ -84,12 +87,14 @@ export class UsersService {
     }
 
     const user = await this.Users.findOne({ id });
+    console.log(user, id, '=====================================');
 
     if (EditUserInput.email) {
       user.email = EditUserInput.email;
       user.verify = false;
 
-      await this.verificationService.create(user);
+      const verification = await this.verificationService.create(user);
+      await this.mailService.sendVerifyEmail(user.email, verification.code);
     }
 
     if (EditUserInput.password) {

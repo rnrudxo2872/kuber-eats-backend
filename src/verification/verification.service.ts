@@ -49,6 +49,7 @@ export class VerificationService {
     console.log(verification);
 
     await this.User.save(verification.user);
+    await this.Verification.delete(verification.id);
     return { ok: true };
   }
 }

@@ -10,9 +10,7 @@ export class MailService {
     @Inject(MAIL_CONFIG_OPTIONS) private readonly options: MailOptions,
     private readonly mailerService: MailerService,
     private readonly confingService: ConfigService,
-  ) {
-    this.sendVerifyEmail('rnrudxo@gmail.com', 'ei14l5m23eee');
-  }
+  ) {}
 
   private async sendEamil(mailContext: MailContext) {
     return this.mailerService.sendMail({

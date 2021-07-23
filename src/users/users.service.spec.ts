@@ -29,9 +29,14 @@ const mockMailService = {
 };
 
 type MockRepository<T> = Partial<Record<keyof Repository<T>, jest.Mock>>;
+type verificationServiceMock = Partial<
+  Record<keyof VerificationService, jest.Mock>
+>;
 
 describe('UserService', () => {
   let service: UsersService;
+  let verificationService: verificationServiceMock;
+  let mailService: MailService;
   let userRepository: MockRepository<User>;
 
   beforeAll(async () => {
@@ -56,7 +61,10 @@ describe('UserService', () => {
         },
       ],
     }).compile();
+
     service = await module.get<UsersService>(UsersService);
+    verificationService = await module.get(VerificationService);
+    mailService = await module.get<MailService>(MailService);
     userRepository = module.get(getRepositoryToken(User));
   });
 
@@ -70,6 +78,12 @@ describe('UserService', () => {
       password: '1234',
       role: 0,
     };
+
+    const verification = {
+      code: '',
+      user: CreatingUser,
+    };
+
     it('should fail if user exists', async () => {
       userRepository.findOne.mockResolvedValue({
         id: 1,
@@ -84,15 +98,29 @@ describe('UserService', () => {
     });
 
     it('should create a new user', async () => {
-      userRepository.findOne.mockReturnValue(undefined);
+      userRepository.findOne.mockResolvedValue(undefined);
       userRepository.create.mockReturnValue(CreatingUser);
+      userRepository.save.mockReturnValue(CreatingUser);
 
-      await service.createAccount(CreatingUser);
+      verificationService.create.mockResolvedValue(verification);
+
+      const result = await service.createAccount(CreatingUser);
 
       expect(userRepository.create).toHaveBeenCalledTimes(1);
       expect(userRepository.create).toHaveBeenCalledWith(CreatingUser);
       expect(userRepository.save).toHaveBeenCalledTimes(1);
       expect(userRepository.save).toHaveBeenCalledWith(CreatingUser);
+
+      expect(verificationService.create).toHaveBeenCalledTimes(1);
+      expect(verificationService.create).toHaveBeenCalledWith(CreatingUser);
+
+      expect(mailService.sendVerifyEmail).toHaveBeenCalledTimes(1);
+      expect(mailService.sendVerifyEmail).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.any(String),
+      );
+
+      expect(result).toEqual({ ok: true });
     });
   });
 

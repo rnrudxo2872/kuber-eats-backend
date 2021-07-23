@@ -31,6 +31,7 @@ export class UsersService {
     role,
   }: createAccountInput): Promise<{ ok: boolean; error?: string }> {
     const exists = await this.Users.findOne({ email });
+    console.log(exists);
 
     if (exists) {
       throw 'The current email exists.';

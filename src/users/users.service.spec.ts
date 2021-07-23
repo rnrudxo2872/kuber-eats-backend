@@ -7,11 +7,11 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 
-const mockRepository = {
+const mockRepository = () => ({
   findOne: jest.fn(),
   save: jest.fn(),
   create: jest.fn(),
-};
+});
 
 const mockVerificationService = {
   create: jest.fn(),
@@ -40,7 +40,7 @@ describe('UserService', () => {
         UsersService,
         {
           provide: getRepositoryToken(User),
-          useValue: mockRepository,
+          useValue: mockRepository(),
         },
         {
           provide: VerificationService,
@@ -65,21 +65,34 @@ describe('UserService', () => {
   });
 
   describe('createAccount', () => {
+    const CreatingUser = {
+      email: '',
+      password: '1234',
+      role: 0,
+    };
     it('should fail if user exists', async () => {
       userRepository.findOne.mockResolvedValue({
         id: 1,
         email: 'Mock',
       });
-      const result = await service.createAccount({
-        email: '',
-        password: '1234',
-        role: 0,
-      });
+      const result = await service.createAccount(CreatingUser);
 
       expect(result).toMatchObject({
         ok: false,
         error: 'The current email exists.',
       });
+    });
+
+    it('should create a new user', async () => {
+      userRepository.findOne.mockReturnValue(undefined);
+      userRepository.create.mockReturnValue(CreatingUser);
+
+      await service.createAccount(CreatingUser);
+
+      expect(userRepository.create).toHaveBeenCalledTimes(1);
+      expect(userRepository.create).toHaveBeenCalledWith(CreatingUser);
+      expect(userRepository.save).toHaveBeenCalledTimes(1);
+      expect(userRepository.save).toHaveBeenCalledWith(CreatingUser);
     });
   });
 

@@ -39,7 +39,9 @@ export class UsersService {
     const user = await this.Users.save(
       this.Users.create({ email, password, role }),
     );
+    console.log('유저', user);
     const verification = await this.verificationService.create(user);
+    console.log('여기??', verification);
     await this.mailService.sendVerifyEmail(user.email, verification.code);
     return { ok: true };
   }

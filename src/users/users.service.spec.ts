@@ -39,7 +39,7 @@ describe('UserService', () => {
   let mailService: MailService;
   let userRepository: MockRepository<User>;
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
         UsersService,
@@ -84,19 +84,6 @@ describe('UserService', () => {
       user: CreatingUser,
     };
 
-    it('should fail if user exists', async () => {
-      userRepository.findOne.mockResolvedValue({
-        id: 1,
-        email: 'Mock',
-      });
-      const result = await service.createAccount(CreatingUser);
-
-      expect(result).toMatchObject({
-        ok: false,
-        error: 'The current email exists.',
-      });
-    });
-
     it('should create a new user', async () => {
       userRepository.findOne.mockResolvedValue(undefined);
       userRepository.create.mockReturnValue(CreatingUser);
@@ -121,6 +108,40 @@ describe('UserService', () => {
       );
 
       expect(result).toEqual({ ok: true });
+    });
+
+    it('should fail on exception', async () => {
+      userRepository.findOne.mockResolvedValue(undefined);
+      userRepository.save.mockRejectedValue(new Error());
+      const result = await service.createAccount(CreatingUser);
+      expect(result).toEqual({ ok: false, error: "Couldn't create account." });
+    });
+
+    it('should fail on exception', async () => {
+      userRepository.findOne.mockResolvedValue(undefined);
+      userRepository.create.mockReturnValue(CreatingUser);
+      userRepository.save.mockReturnValue(CreatingUser);
+
+      verificationService.create.mockRejectedValue(new Error());
+
+      const result = await service.createAccount(CreatingUser);
+      expect(result).toEqual({ ok: false, error: "Couldn't create account." });
+    });
+
+    it('should fail on exception', async () => {
+      userRepository.findOne.mockRejectedValue(new Error());
+      const result = await service.createAccount(CreatingUser);
+      expect(result).toEqual({ ok: false, error: "Couldn't create account." });
+    });
+
+    it('should fail if user exists', async () => {
+      userRepository.findOne.mockResolvedValue(CreatingUser);
+      const result = await service.createAccount(CreatingUser);
+
+      expect(result).toMatchObject({
+        ok: false,
+        error: 'The current email exists.',
+      });
     });
   });
 

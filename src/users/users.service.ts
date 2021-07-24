@@ -31,14 +31,14 @@ export class UsersService {
     role,
   }: createAccountInput): Promise<{ ok: boolean; error?: string }> {
     const exists = await this.Users.findOne({ email });
-    console.log(exists);
 
-    if (exists) {
+    if (exists && exists.hasOwnProperty('email')) {
       throw 'The current email exists.';
     }
     const user = await this.Users.save(
       this.Users.create({ email, password, role }),
     );
+
     const verification = await this.verificationService.create(user);
     await this.mailService.sendVerifyEmail(user.email, verification.code);
     return { ok: true };

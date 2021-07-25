@@ -150,6 +150,12 @@ describe('UserService', () => {
   describe('login', () => {
     const loginUser = { email: 'Mock@naver.com', password: '1234' };
 
+    it('should throw Exception', async () => {
+      userRepository.findOne.mockRejectedValue(new Error());
+      const result = await service.login(loginUser);
+      expect(result).toEqual({ ok: false, error: 'Can not login.' });
+    });
+
     it("should fail if user doesn't exists", async () => {
       userRepository.findOne.mockResolvedValue(undefined);
       const result = await service.login(loginUser);
@@ -202,7 +208,36 @@ describe('UserService', () => {
     });
   });
 
-  it.todo('getById');
+  describe('getById', () => {
+    const mockUser = {
+      id: 1,
+      email: 'Mock',
+    };
+    const findArgs = {
+      id: 1,
+    };
+
+    it('should find an User.', async () => {
+      userRepository.findOne.mockResolvedValue(mockUser);
+      const result = await service.getById(findArgs);
+
+      expect(userRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(userRepository.findOne).toHaveBeenCalledWith(expect.any(Object));
+
+      expect(result).toEqual({ ok: true, user: mockUser });
+    });
+
+    it('should fail if no exist User.', async () => {
+      userRepository.findOne.mockResolvedValue(null);
+      const result = await service.getById(findArgs);
+
+      expect(userRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(userRepository.findOne).toHaveBeenCalledWith(expect.any(Object));
+
+      expect(result).toEqual({ ok: false, error: '해당하는 유저가 없습니다.' });
+    });
+  });
+
   it.todo('editUser');
   it.todo('getAll');
 });

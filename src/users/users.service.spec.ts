@@ -145,7 +145,22 @@ describe('UserService', () => {
     });
   });
 
-  it.todo('login');
+  describe('login', () => {
+    const loginUser = { email: 'Mock@naver.com', password: '1234' };
+
+    it("should fail if user doesn't exists", async () => {
+      userRepository.findOne.mockResolvedValue(undefined);
+      const result = await service.login(loginUser);
+      expect(result).toEqual({ ok: false, error: 'ID does not exist.' });
+    });
+
+    // it('should be login', () => {
+    //   userRepository.findOne.mockResolvedValue({ id: 1, password: '1234' });
+    //   const result = service.login(loginUser);
+    //   expect(result).toEqual({ ok: true, user: { id: 1, password: '1234' } });
+    // });
+  });
+
   it.todo('getById');
   it.todo('editUser');
   it.todo('getAll');

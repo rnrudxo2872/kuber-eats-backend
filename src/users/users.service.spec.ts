@@ -20,7 +20,7 @@ const mockVerificationService = {
 };
 
 const mockJwtService = {
-  sign: jest.fn(),
+  sign: jest.fn(() => 'This is jwt return token.'),
   verify: jest.fn(),
 };
 
@@ -36,6 +36,7 @@ type verificationServiceMock = Partial<
 describe('UserService', () => {
   let service: UsersService;
   let verificationService: verificationServiceMock;
+  let jwtService: JwtService;
   let mailService: MailService;
   let userRepository: MockRepository<User>;
 
@@ -64,6 +65,7 @@ describe('UserService', () => {
 
     service = await module.get<UsersService>(UsersService);
     verificationService = await module.get(VerificationService);
+    jwtService = await module.get<JwtService>(JwtService);
     mailService = await module.get<MailService>(MailService);
     userRepository = module.get(getRepositoryToken(User));
   });
@@ -159,11 +161,45 @@ describe('UserService', () => {
       expect(result).toEqual({ ok: false, error: 'ID does not exist.' });
     });
 
-    // it('should be login', () => {
-    //   userRepository.findOne.mockResolvedValue({ id: 1, password: '1234' });
-    //   const result = service.login(loginUser);
-    //   expect(result).toEqual({ ok: true, user: { id: 1, password: '1234' } });
-    // });
+    it('should fail if password is wrong.', async () => {
+      const mockedUser = {
+        id: 1,
+        checkPassword: jest.fn(() => Promise.resolve(false)),
+      };
+      userRepository.findOne.mockResolvedValue(mockedUser);
+      const result = await service.login(loginUser);
+
+      expect(userRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(userRepository.findOne).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.any(Object),
+      );
+
+      expect(result).toEqual({ ok: false, error: 'Passwords do not match.' });
+    });
+
+    it('should be login', async () => {
+      const mockUser = {
+        id: 1,
+        checkPassword: jest
+          .fn()
+          .mockImplementation(() => Promise.resolve(true)),
+      };
+
+      userRepository.findOne.mockResolvedValue(mockUser);
+
+      const result = await service.login(loginUser);
+
+      expect(userRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(userRepository.findOne).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.any(Object),
+      );
+      expect(jwtService.sign).toHaveBeenCalledTimes(1);
+      expect(jwtService.sign).toHaveBeenCalledWith(expect.any(Number));
+
+      expect(result).toEqual({ ok: true, token: 'This is jwt return token.' });
+    });
   });
 
   it.todo('getById');

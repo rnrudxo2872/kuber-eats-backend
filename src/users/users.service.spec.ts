@@ -151,6 +151,11 @@ describe('UserService', () => {
     it("should fail if user doesn't exists", async () => {
       userRepository.findOne.mockResolvedValue(undefined);
       const result = await service.login(loginUser);
+      expect(userRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(userRepository.findOne).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.any(Object),
+      );
       expect(result).toEqual({ ok: false, error: 'ID does not exist.' });
     });
 

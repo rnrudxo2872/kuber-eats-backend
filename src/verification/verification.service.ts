@@ -22,16 +22,18 @@ export class VerificationService {
         id: user.id,
       },
     });
+
     if (exists) {
       exists.code = '1';
       exists.user = user;
 
       return await this.Verification.save(exists);
     }
+
     return await this.Verification.save(this.Verification.create({ user }));
   }
 
-  @TryCatch('Not Found Verification Enttity')
+  @TryCatch('Not Found Verification Entity')
   async findOne(user) {
     return await this.Verification.findOne({ user });
   }

@@ -13,20 +13,20 @@ const mockRepository = () => ({
   create: jest.fn(),
 });
 
-const mockVerificationService = {
+const mockVerificationService = () => ({
   create: jest.fn(),
   findOne: jest.fn(),
   verifyEmail: jest.fn(),
-};
+});
 
-const mockJwtService = {
+const mockJwtService = () => ({
   sign: jest.fn(() => 'This is jwt return token.'),
   verify: jest.fn(),
-};
+});
 
-const mockMailService = {
+const mockMailService = () => ({
   sendVerifyEmail: jest.fn(),
-};
+});
 
 type MockRepository<T> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 type verificationServiceMock = Partial<
@@ -50,15 +50,15 @@ describe('UserService', () => {
         },
         {
           provide: VerificationService,
-          useValue: mockVerificationService,
+          useValue: mockVerificationService(),
         },
         {
           provide: JwtService,
-          useValue: mockJwtService,
+          useValue: mockJwtService(),
         },
         {
           provide: MailService,
-          useValue: mockMailService,
+          useValue: mockMailService(),
         },
       ],
     }).compile();
@@ -266,6 +266,9 @@ describe('UserService', () => {
       expect(userRepository.findOne).toHaveBeenCalledTimes(1);
       expect(userRepository.findOne).toHaveBeenCalledWith({ id: newUser.id });
 
+      expect(verificationService.create).toHaveBeenCalledTimes(1);
+
+      expect(mailService.sendVerifyEmail).toHaveBeenCalledTimes(1);
       expect(mailService.sendVerifyEmail).toHaveBeenCalledWith(
         newUser.EditUserInput.email,
         newVerfication.code,

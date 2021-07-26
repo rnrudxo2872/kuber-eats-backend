@@ -94,7 +94,6 @@ export class UsersService {
       user.verify = false;
 
       const verification = await this.verificationService.create(user);
-      console.log(verification);
 
       await this.mailService.sendVerifyEmail(user.email, verification.code);
     }

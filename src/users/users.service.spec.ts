@@ -267,6 +267,7 @@ describe('UserService', () => {
       expect(userRepository.findOne).toHaveBeenCalledWith({ id: newUser.id });
 
       expect(verificationService.create).toHaveBeenCalledTimes(1);
+      expect(verificationService.create).toHaveBeenCalledWith(oldUser);
 
       expect(mailService.sendVerifyEmail).toHaveBeenCalledTimes(1);
       expect(mailService.sendVerifyEmail).toHaveBeenCalledWith(
@@ -274,7 +275,45 @@ describe('UserService', () => {
         newVerfication.code,
       );
 
+      expect(userRepository.save).toHaveBeenCalledTimes(1);
+      expect(userRepository.save).toHaveBeenCalledWith(oldUser);
+
       expect(result).toEqual({ ok: true });
+    });
+
+    it('should change password', async () => {
+      const oldUser = {
+        id: 1,
+        password: 'oldMock123',
+        verify: true,
+      };
+
+      const newUser = {
+        id: 1,
+        EditUserInput: {
+          password: 'newMock123',
+        },
+      };
+
+      const { id, EditUserInput } = newUser;
+
+      userRepository.findOne.mockResolvedValue(oldUser);
+
+      const result = await service.editUser(id, EditUserInput);
+
+      expect(userRepository.findOne).toHaveBeenCalledTimes(1);
+      expect(userRepository.findOne).toHaveBeenCalledWith({ id });
+
+      expect(userRepository.save).toHaveBeenCalledTimes(1);
+      expect(userRepository.save).toHaveBeenCalledWith(oldUser);
+
+      expect(result).toEqual({ ok: true });
+    });
+
+    it('should fail on exception', async () => {
+      userRepository.findOne.mockRejectedValue(new Error());
+      const result = await service.editUser(1, { email: 'Mock@gmail.com' });
+      expect(result).toEqual({ ok: false, error: '잘못된 요청입니다.' });
     });
   });
 

@@ -20,8 +20,9 @@ export class UsersService {
     private readonly mailService: MailService,
   ) {}
 
-  getAll(): Promise<User[]> {
-    return this.Users.find({});
+  @TryCatch('정보를 가져올 수 없습니다!')
+  async getAll(): Promise<User[]> {
+    return await this.Users.find({});
   }
 
   @TryCatch("Couldn't create account.")

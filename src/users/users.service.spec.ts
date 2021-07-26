@@ -8,6 +8,7 @@ import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 
 const mockRepository = () => ({
+  find: jest.fn(),
   findOne: jest.fn(),
   save: jest.fn(),
   create: jest.fn(),
@@ -317,5 +318,26 @@ describe('UserService', () => {
     });
   });
 
-  it.todo('getAll');
+  describe('getAll', () => {
+    it('should get All', async () => {
+      const userList = [
+        { id: 1, email: 'mock1@gmail.com' },
+        { id: 2, email: 'mock2@gmail.com' },
+      ];
+      userRepository.find.mockReturnValue(userList);
+      const result = await service.getAll();
+      expect(userRepository.find).toHaveBeenCalledTimes(1);
+
+      expect(result).toEqual(userList);
+    });
+
+    it('should fail on Exception', async () => {
+      userRepository.find.mockRejectedValue(new Error());
+      const result = await service.getAll();
+      expect(result).toEqual({
+        ok: false,
+        error: '정보를 가져올 수 없습니다!',
+      });
+    });
+  });
 });

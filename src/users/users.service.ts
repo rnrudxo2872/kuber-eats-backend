@@ -88,13 +88,14 @@ export class UsersService {
     }
 
     const user = await this.Users.findOne({ id });
-    console.log(user, id, '=====================================');
 
     if (EditUserInput.email) {
       user.email = EditUserInput.email;
       user.verify = false;
 
       const verification = await this.verificationService.create(user);
+      console.log(verification);
+
       await this.mailService.sendVerifyEmail(user.email, verification.code);
     }
 

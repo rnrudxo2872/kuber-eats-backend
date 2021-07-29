@@ -85,5 +85,7 @@ describe('VerificationService', () => {
       expect(verificationRepository.delete).toHaveBeenCalledTimes(1);
       expect(result).toEqual({ ok: true });
     });
+
+    it.todo('should throw error.');
   });
 });

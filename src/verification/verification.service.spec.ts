@@ -60,13 +60,27 @@ describe('VerificationService', () => {
         return true;
       },
     };
-    it('should be created', async () => {
+
+    it('should be updated', async () => {
       verificationRepository.findOne.mockResolvedValue({ code: '123' });
       verificationRepository.save.mockResolvedValue({ code: '123' });
 
-      const result = await service.create(curUser);
+      await service.create(curUser);
       expect(verificationRepository.findOne).toHaveBeenCalledTimes(1);
       expect(verificationRepository.save).toHaveBeenCalledTimes(1);
+    });
+
+    it('should be created', async () => {
+      verificationRepository.findOne.mockResolvedValue(undefined);
+      verificationRepository.create.mockReturnValue({ code: '1234' });
+
+      await service.create(curUser);
+
+      expect(verificationRepository.create).toHaveBeenCalledTimes(1);
+      expect(verificationRepository.save).toHaveBeenCalledTimes(1);
+      expect(verificationRepository.save).toHaveBeenCalledWith(
+        expect.any(Object),
+      );
     });
   });
 
@@ -86,6 +100,10 @@ describe('VerificationService', () => {
       expect(result).toEqual({ ok: true });
     });
 
-    it.todo('should throw error.');
+    it('should throw error.', async () => {
+      verificationRepository.findOne.mockRejectedValue(Error());
+      const result = await service.verifyEmail({ code: '1234' });
+      expect(result).toEqual({ ok: false, error: 'Verify Email Error' });
+    });
   });
 });

@@ -105,5 +105,11 @@ describe('VerificationService', () => {
       const result = await service.verifyEmail({ code: '1234' });
       expect(result).toEqual({ ok: false, error: 'Verify Email Error' });
     });
+
+    it('No exist verification', async () => {
+      verificationRepository.findOne.mockResolvedValue(undefined);
+      const result = await service.verifyEmail({ code: '1234' });
+      expect(result).toEqual({ ok: false, error: 'Verify Email Error' });
+    });
   });
 });

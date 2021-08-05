@@ -25,6 +25,5 @@ export class MailService {
       to: username,
       html: `<h1>Please Verify Your Email</h1><div>Hello, ${username}!</div><a href="http://127.0.0.1:3000?confirm=${code}"><button>Verify Email</button></a><div>Thanks for choosing Kuber Eats. </div>`,
     });
-    console.log('보내졌나?');
   }
 }

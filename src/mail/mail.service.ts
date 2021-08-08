@@ -12,13 +12,12 @@ export class MailService {
     private readonly confingService: ConfigService,
   ) {}
 
-  private async sendEmail(mailContext: MailContext) {
+  async sendEmail(mailContext: MailContext) {
     try {
-      this.mailerService.sendMail({
+      await this.mailerService.sendMail({
         from: this.confingService.get('MAIL_FROM_EMAIL'),
         ...mailContext,
       });
-
       return true;
     } catch (error) {
       console.warn(error);
@@ -38,7 +37,6 @@ export class MailService {
       }
       return true;
     } catch (error) {
-      console.warn(error);
       return false;
     }
   }

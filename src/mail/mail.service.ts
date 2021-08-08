@@ -13,17 +13,33 @@ export class MailService {
   ) {}
 
   private async sendEmail(mailContext: MailContext) {
-    return this.mailerService.sendMail({
-      from: this.confingService.get('MAIL_FROM_EMAIL'),
-      ...mailContext,
-    });
+    try {
+      this.mailerService.sendMail({
+        from: this.confingService.get('MAIL_FROM_EMAIL'),
+        ...mailContext,
+      });
+
+      return true;
+    } catch (error) {
+      console.warn(error);
+      return false;
+    }
   }
 
   async sendVerifyEmail(username: string, code: string) {
-    await this.sendEmail({
-      subject: 'Kuber Eats Email Verify',
-      to: username,
-      html: `<h1>Please Verify Your Email</h1><div>Hello, ${username}!</div><a href="http://127.0.0.1:3000?confirm=${code}"><button>Verify Email</button></a><div>Thanks for choosing Kuber Eats. </div>`,
-    });
+    try {
+      const result = await this.sendEmail({
+        subject: 'Kuber Eats Email Verify',
+        to: username,
+        html: `<h1>Please Verify Your Email</h1><div>Hello, ${username}!</div><a href="http://127.0.0.1:3000?confirm=${code}"><button>Verify Email</button></a><div>Thanks for choosing Kuber Eats. </div>`,
+      });
+      if (!result) {
+        throw Error();
+      }
+      return true;
+    } catch (error) {
+      console.warn(error);
+      return false;
+    }
   }
 }

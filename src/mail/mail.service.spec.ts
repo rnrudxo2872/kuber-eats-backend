@@ -111,7 +111,7 @@ describe('MailService', () => {
     });
 
     it('should fail sendEmail', async () => {
-      const sendMailSpy = jest
+      jest
         .spyOn(MailService.prototype as any, 'sendEmail')
         .mockImplementation(async () => {
           return false;

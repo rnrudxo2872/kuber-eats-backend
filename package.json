@@ -74,7 +74,7 @@
     "typescript": "^4.1.5"
   },
   "jest": {
-    "moduleNameMapper":{
+    "moduleNameMapper": {
       "^src/(.*)": "<rootDir>/$1"
     },
     "moduleFileExtensions": [
@@ -92,7 +92,7 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
-    "coveragePathIgnorePatterns":[
+    "coveragePathIgnorePatterns": [
       "node_modules",
       ".entity.ts",
       ".constant.ts"
